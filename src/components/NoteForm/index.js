@@ -4,8 +4,9 @@ import Note from "../Note";
 import Notification from "../Notification";
 import noteService from "../../services/notes";
 import { useManageError } from "../../customHooks/useManageError";
+import { LOCAL_STORAGE_KEYS } from "../../constants";
 
-const NoteForm = ({ user }) => {
+const NoteForm = ({ user, setUser }) => {
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState("");
   const [showAll, setShowAll] = useState(true);
@@ -50,9 +51,17 @@ const NoteForm = ({ user }) => {
     setNewNote(event.target.value);
   };
 
+  const handleLogout = () => {
+    setUser(null);
+    window.localStorage.removeItem(LOCAL_STORAGE_KEYS.loggedUser);
+  };
+
   const notesToShow = showAll ? notes : notes.filter((note) => note.important);
   return (
     <div>
+      <button type="button" onClick={handleLogout}>
+        Cerrar sesión
+      </button>
       <div>
         <button onClick={() => setShowAll(!showAll)}>
           show {showAll ? "important" : "all"}
@@ -79,6 +88,7 @@ const NoteForm = ({ user }) => {
 NoteForm.displayName = "NoteForm";
 NoteForm.propTypes = {
   user: PropTypes.object,
+  setUser: PropTypes.func,
 };
 
 export default NoteForm;

@@ -3,8 +3,9 @@ import PropTypes from "prop-types";
 import { useManageError } from "../../customHooks/useManageError";
 import { login } from "../../services/login";
 import Notification from "../Notification";
+import { LOCAL_STORAGE_KEYS } from "../../constants";
 
-const LoginForm = ({setUser}) => {
+const LoginForm = ({ setUser }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const { errorMessage, setError } = useManageError();
@@ -22,6 +23,10 @@ const LoginForm = ({setUser}) => {
     const user = await login({ username, password }, setError);
     if (user) {
       setUser(user);
+      window.localStorage.setItem(
+        LOCAL_STORAGE_KEYS.loggedUser,
+        JSON.stringify(user)
+      );
     }
   };
 
@@ -47,7 +52,7 @@ const LoginForm = ({setUser}) => {
 
 LoginForm.displayName = "LoginForm";
 LoginForm.propTypes = {
-  setUser: PropTypes.func
+  setUser: PropTypes.func,
 };
 
 export default LoginForm;
