@@ -6,6 +6,6 @@ export const login = async (userData, setError) => {
     const request = await axios.post(baseUrl, userData);
     return request.data;
   } catch (error) {
-    setError(error.response.data.error);
+    setError(error);
   }
 };

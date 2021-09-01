@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import Note from "../Note";
 import Notification from "../Notification";
 import noteService from "../../services/notes";
 import { useManageError } from "../../customHooks/useManageError";
 
-const NoteForm = () => {
+const NoteForm = ({ user }) => {
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState("");
   const [showAll, setShowAll] = useState(true);
   const { errorMessage, setError } = useManageError();
+
+  const { token } = user;
 
   useEffect(() => {
     noteService.getAll().then((initialNotes) => {
@@ -20,12 +23,10 @@ const NoteForm = () => {
     event.preventDefault();
     const noteObject = {
       content: newNote,
-      date: new Date().toISOString(),
       important: Math.random() > 0.5,
-      id: notes.length + 1,
     };
 
-    noteService.create(noteObject).then((returnedNote) => {
+    noteService.create(noteObject, token).then((returnedNote) => {
       setNotes(notes.concat(returnedNote));
       setNewNote("");
     });
@@ -36,7 +37,7 @@ const NoteForm = () => {
     const changedNote = { ...note, important: !note.important };
 
     noteService
-      .update(id, changedNote)
+      .update(id, changedNote, token)
       .then((returnedNote) => {
         setNotes(notes.map((note) => (note.id !== id ? note : returnedNote)));
       })
@@ -76,6 +77,8 @@ const NoteForm = () => {
 };
 
 NoteForm.displayName = "NoteForm";
-// NoteForm.propTypes = {};
+NoteForm.propTypes = {
+  user: PropTypes.object,
+};
 
 export default NoteForm;

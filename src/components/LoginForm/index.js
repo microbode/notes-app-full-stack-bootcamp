@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-// import PropTypes from "prop-types";
+import PropTypes from "prop-types";
 import { useManageError } from "../../customHooks/useManageError";
 import { login } from "../../services/login";
 import Notification from "../Notification";
 
-const LoginForm = () => {
+const LoginForm = ({setUser}) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const { errorMessage, setError } = useManageError();
@@ -19,14 +19,25 @@ const LoginForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    await login({ username, password }, setError);
+    const user = await login({ username, password }, setError);
+    if (user) {
+      setUser(user);
+    }
   };
 
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <input value={username} onChange={handleChangeUsername} />
-        <input value={password} onChange={handleChangePassword} />
+        <input
+          value={username}
+          placeholder="username"
+          onChange={handleChangeUsername}
+        />
+        <input
+          value={password}
+          placeholder="password"
+          onChange={handleChangePassword}
+        />
         <button type="submit">Login</button>
       </form>
       <Notification message={errorMessage} />
@@ -35,6 +46,8 @@ const LoginForm = () => {
 };
 
 LoginForm.displayName = "LoginForm";
-LoginForm.propTypes = {};
+LoginForm.propTypes = {
+  setUser: PropTypes.func
+};
 
 export default LoginForm;

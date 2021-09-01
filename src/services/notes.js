@@ -7,13 +7,23 @@ const getAll = () => {
   return request.then((response) => response.data);
 };
 
-const create = (newObject) => {
-  const request = axios.post(baseUrl, newObject);
+const create = (newObject, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const request = axios.post(baseUrl, newObject, config);
   return request.then((response) => response.data);
 };
 
-const update = (id, newObject) => {
-  const request = axios.put(`${baseUrl}/${id}`, newObject);
+const update = (id, newObject, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const request = axios.put(`${baseUrl}/${id}`, newObject, config);
   return request.then((response) => response.data);
 };
 
