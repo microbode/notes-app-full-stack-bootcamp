@@ -1,67 +1,64 @@
-import React, { useState, useEffect } from "react";
-import NoteForm from "./components/NoteForm";
-import LoginForm from "./components/LoginForm";
-import { LOCAL_STORAGE_KEYS } from "./constants";
-import NotesList from "./components/NotesList";
+import React, { useEffect, useState } from "react";
+import { Link, BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+import LoginView from "./components/LoginView";
+import NoteDetail from "./components/NoteDetail";
+import NotesView from "./components/NotesView";
 import noteService from "./services/notes";
-import { useManageError } from "./customHooks/useManageError";
-import Toggable from "./components/Toggable";
+
+const linkStyles = {
+  paddingLeft: "10px",
+};
 
 const App = () => {
-  const [user, setUser] = useState(null);
   const [notes, setNotes] = useState([]);
-  const { errorMessage, setError } = useManageError();
-  const { token } = user ?? {};
 
   useEffect(() => {
-    const userFromLocalStorage = window.localStorage.getItem(
-      LOCAL_STORAGE_KEYS.loggedUser
-    );
-    if (userFromLocalStorage) {
-      const user = JSON.parse(userFromLocalStorage);
-      setUser(user);
-    }
+    noteService.getAll().then((initialNotes) => {
+      setNotes(initialNotes);
+    });
   }, []);
 
-  const handleLogout = () => {
-    setUser(null);
-    window.localStorage.removeItem(LOCAL_STORAGE_KEYS.loggedUser);
-  };
+  const Home = () => <div>Home</div>;
 
-  const addNote = (noteObject) => {
-    noteService.create(noteObject, token).then((returnedNote) => {
-      setNotes(notes.concat(returnedNote));
-    });
-  };
+  const Users = () => <div>Users</div>;
 
   return (
-    <>
-      <h1>Notes</h1>
-      {user ? (
-        <>
-          <button type="button" onClick={handleLogout}>
-            Logout
-          </button>
-          <Toggable buttonLabel="New note">
-            <NoteForm
-              user={user}
-              addNote={addNote}
-              errorMessage={errorMessage}
-            />
-          </Toggable>
-          <NotesList
-            notes={notes}
-            setError={setError}
-            setNotes={setNotes}
-            token={token}
-          />
-        </>
-      ) : (
-        <Toggable buttonLabel={"Show login"}>
-          <LoginForm setUser={setUser} />
-        </Toggable>
-      )}
-    </>
+    <BrowserRouter>
+      <header>
+        <Link to={"/"} style={linkStyles}>
+          Home
+        </Link>
+        <Link to={"/notes"} style={linkStyles}>
+          Notes
+        </Link>
+        <Link to={"/users"} style={linkStyles}>
+          Users
+        </Link>
+        <Link to={"/login"} style={linkStyles}>
+          Login
+        </Link>
+      </header>
+      <Switch>
+        <Route path="/notes/:noteId">
+          <NoteDetail notes={notes} />
+        </Route>
+        <Route path="/notes">
+          <NotesView />
+        </Route>
+        <Route path="/users">
+          <Users />
+        </Route>
+        <Route
+          path="/login"
+          render={() => {
+            return user ? <Redirect to="/" /> : <LoginView />;
+          }}
+        />
+        <Route path="/">
+          <Home />
+        </Route>
+      </Switch>
+    </BrowserRouter>
   );
 };
 

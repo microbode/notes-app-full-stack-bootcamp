@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import Note from "../Note";
-import noteService from "../../services/notes";
+import NotesListItem from "./NotesListItem";
+import noteService from "../../../services/notes";
 
 const NotesList = ({ setNotes, notes, setError, token }) => {
   const [showAll, setShowAll] = useState(true);
@@ -34,7 +34,7 @@ const NotesList = ({ setNotes, notes, setError, token }) => {
       </button>
       <ul>
         {notesToShow.map((note, i) => (
-          <Note
+          <NotesListItem
             key={i}
             note={note}
             toggleImportance={() => toggleImportanceOf(note.id)}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import Notification from "../Notification";
+import Notification from "../../Notification";
 
 const NoteForm = ({ user, addNote, errorMessage }) => {
   const [newNote, setNewNote] = useState("");

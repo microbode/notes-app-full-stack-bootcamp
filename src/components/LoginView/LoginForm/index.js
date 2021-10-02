@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { useManageError } from "../../customHooks/useManageError";
-import { login } from "../../services/login";
-import Notification from "../Notification";
-import { LOCAL_STORAGE_KEYS } from "../../constants";
+import { useManageError } from "../../../customHooks/useManageError";
+import { login } from "../../../services/login";
+import Notification from "../../Notification";
+import { LOCAL_STORAGE_KEYS } from "../../../constants";
+import { useHistory } from "react-router-dom";
 
 const LoginForm = ({ setUser }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const { errorMessage, setError } = useManageError();
+  const history = useHistory();
 
   const handleChangeUsername = (event) => {
     setUsername(event.target.value);
@@ -27,6 +29,7 @@ const LoginForm = ({ setUser }) => {
         LOCAL_STORAGE_KEYS.loggedUser,
         JSON.stringify(user)
       );
+      history.push("/home");
     }
   };
 
