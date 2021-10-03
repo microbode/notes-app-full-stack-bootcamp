@@ -1,22 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link, BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import LoginView from "./components/LoginView";
 import NoteDetail from "./components/NoteDetail";
 import NotesView from "./components/NotesView";
-import noteService from "./services/notes";
+import useNotes from "./customHooks/useNotes";
 
 const linkStyles = {
   paddingLeft: "10px",
 };
 
 const App = () => {
-  const [notes, setNotes] = useState([]);
-
-  useEffect(() => {
-    noteService.getAll().then((initialNotes) => {
-      setNotes(initialNotes);
-    });
-  }, []);
+  const { notes } = useNotes();
 
   const Home = () => <div>Home</div>;
 
@@ -48,12 +42,9 @@ const App = () => {
         <Route path="/users">
           <Users />
         </Route>
-        <Route
-          path="/login"
-          render={() => {
-            return user ? <Redirect to="/" /> : <LoginView />;
-          }}
-        />
+        <Route path="/login">
+          <LoginView />
+        </Route>        
         <Route path="/">
           <Home />
         </Route>

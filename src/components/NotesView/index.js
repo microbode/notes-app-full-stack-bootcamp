@@ -1,30 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import NoteForm from "./NoteForm";
 import NotesList from "./NotesList";
 import Toggable from "../Toggable";
 import { useManageError } from "../../customHooks/useManageError";
-import noteService from "../../services/notes";
-import { LOCAL_STORAGE_KEYS } from "../../constants";
+import useUser from "../../customHooks/useUser";
+import useNotes from "../../customHooks/useNotes";
 
 const Notes = ({ ...props }) => {
   const { errorMessage, setError } = useManageError();
-  const [user, setUser] = useState(null);
-  const [notes, setNotes] = useState([]);
+  const { user } = useUser();
   const { token } = user ?? {};
+  const { notes, addNote, toggleImportanceOfNote } = useNotes(token);
 
-  useEffect(() => {
-    const userFromLocalStorage = window.localStorage.getItem(
-      LOCAL_STORAGE_KEYS.loggedUser
-    );
-    if (userFromLocalStorage) {
-      const user = JSON.parse(userFromLocalStorage);
-      setUser(user);
-    }
-  }, []);
-
-  const addNote = (noteObject) => {
-    noteService.create(noteObject, token).then((returnedNote) => {
-      setNotes(notes.concat(returnedNote));
+  const toggleImportanceOf = (noteId) => {
+    toggleImportanceOfNote(noteId).catch((error) => {
+      setError(error);
     });
   };
 
@@ -42,7 +32,7 @@ const Notes = ({ ...props }) => {
         <NotesList
           notes={notes}
           setError={setError}
-          setNotes={setNotes}
+          toggleImportanceOf={toggleImportanceOf}
           token={token}
         />
       </>
@@ -51,6 +41,5 @@ const Notes = ({ ...props }) => {
 };
 
 Notes.displayName = "Notes";
-// Notes.propTypes = {};
 
 export default Notes;
