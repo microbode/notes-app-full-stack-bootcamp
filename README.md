@@ -1,1 +1,1 @@
-## notes part2
+Parte de front do curso full stack de notes app
