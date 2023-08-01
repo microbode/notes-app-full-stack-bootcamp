@@ -1,2 +1,2 @@
 ## Description
-Parte de **Front** do **curso full stack de notes app**
+Parte de **Front** do **Curso Full Stack de Notes App**
